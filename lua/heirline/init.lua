@@ -12,13 +12,18 @@ function M.load()
     vim.cmd("set statusline=%{%v:lua.require'heirline'.eval()%}")
 end
 
+M.avail = 0
+
 function M.setup(statusline)
     M.statusline = StatusLine:new(statusline)
     M.load()
 end
 
 function M.eval()
-    return M.statusline:eval()
+    local stl = M.statusline:eval()
+    local out = vim.api.nvim_eval_statusline(stl, {winid=0, fillchar=''})
+    M.avail = out.width - #out.str:gsub("", "")
+    return stl
 end
 
 return M
