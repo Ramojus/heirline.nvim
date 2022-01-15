@@ -26,7 +26,8 @@ function M.eval()
     local winid = vim.api.nvim_win_get_number(0)
     avail[winid] = out.width - require'heirline.utils'.count_chars(out.str:gsub("", ""))
 
-    return stl
+    -- return stl
+    return M.statusline:eval()
 end
 
 function M.get_available_space(winid)
