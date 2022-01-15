@@ -24,14 +24,14 @@ function M.eval()
 
     local out = vim.api.nvim_eval_statusline(stl, {winid=0, fillchar=''})
     local winid = vim.api.nvim_win_get_number(0)
-    avail[winid] = out.width - #out.str:gsub("", "")
+    avail[winid] = out.width - require'heirline.utils'.count_chars(out.str:gsub("", ""))
 
     return stl
 end
 
 function M.get_available_space(winid)
     winid = winid == 0 and vim.api.nvim_win_get_number(0) or winid
-    return avail[winid]
+    return avail[winid] or 0
 end
 
 return M
