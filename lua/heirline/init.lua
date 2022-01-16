@@ -25,8 +25,8 @@ function M.eval()
     local winwidth = vim.api.nvim_win_get_width(0)
     M._avail[winnr] = vim.api.nvim_win_get_width(0)
 
-    local stl = M.statusline:eval()
-    stl = vim.api.nvim_eval_statusline(stl, {winid=0, fillchar=''}).str:gsub("", "")
+    local stl = M.statusline:eval():gsub("%%=", "")
+    stl = vim.api.nvim_eval_statusline(stl, {winid=0}).str
 
     M._avail[winnr] = winwidth - utils.count_chars(stl)
 
