@@ -86,4 +86,9 @@ function M.count_chars(str)
     return ascii_bytes + non_ascii_bytes/3
 end
 
+function M.win_get_avail_space(winid)
+    local winnr = vim.api.nvim_win_get_number(winid)
+    return require'heirline'._avail[winnr] or vim.api.nvim_win_get_width(winid)
+end
+
 return M

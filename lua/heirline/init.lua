@@ -1,5 +1,6 @@
 local M = {}
 local StatusLine = require'heirline.statusline'
+local utils = require'heirline.utils'
 
 M.statusline = {}
 
@@ -12,27 +13,32 @@ function M.load()
     vim.cmd("set statusline=%{%v:lua.require'heirline'.eval()%}")
 end
 
-local avail = {}
-
 function M.setup(statusline)
     M.statusline = StatusLine:new(statusline)
     M.load()
 end
 
+M._avail = {}
+
 function M.eval()
+    local winnr = vim.api.nvim_win_get_number(0)
+    local winwidth = vim.api.nvim_win_get_width(0)
+    M._avail[winnr] = vim.api.nvim_win_get_width(0)
+
     local stl = M.statusline:eval()
+    stl = vim.api.nvim_eval_statusline(stl, {winid=0, fillchar=''}).str:gsub("", "")
 
-    local out = vim.api.nvim_eval_statusline(stl, {winid=0, fillchar=''})
-    local winid = vim.api.nvim_win_get_number(0)
-    avail[winid] = out.width - require'heirline.utils'.count_chars(out.str:gsub("", ""))
+    M._avail[winnr] = winwidth - utils.count_chars(stl)
 
-    -- return stl
     return M.statusline:eval()
 end
 
-function M.get_available_space(winid)
-    winid = winid == 0 and vim.api.nvim_win_get_number(0) or winid
-    return avail[winid] or 0
+-- test [[
+function M.timeit()
+    local start = os.clock()
+    M.eval()
+    return os.clock() - start
 end
+--]]
 
 return M
